@@ -140,6 +140,7 @@ function closeDialog() {
   }
 }
 
+
 closeSettings.addEventListener("click", closeDialog);
 doneSettings.addEventListener("click", closeDialog);
 
