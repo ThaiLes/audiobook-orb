@@ -22,8 +22,32 @@ let isPlaying = false;
 let voiceLevel = 0;
 let previousOrbTime = null;
 let orbFrame = null;
-
 let speechSensitivityMultiplier = 1.0;
+
+// Screen Wake Lock Handler (Prevents mobile display timeout)
+let wakeLock = null;
+
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+    }
+  } catch (err) {
+    console.warn('Wake Lock error:', err);
+  }
+}
+
+function releaseWakeLock() {
+  if (wakeLock !== null) {
+    wakeLock.release().then(() => { wakeLock = null; });
+  }
+}
+
+document.addEventListener('visibilitychange', async () => {
+  if (wakeLock !== null && document.visibilityState === 'visible' && isPlaying) {
+    await requestWakeLock();
+  }
+});
 
 // Web Audio API Setup
 let audioCtx = null;
@@ -37,9 +61,8 @@ function setupWebAudio() {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     audioCtx = new AudioContext();
     analyser = audioCtx.createAnalyser();
-    
     analyser.fftSize = 256;
-    analyser.smoothingTimeConstant = 0.25;
+    analyser.smoothingTimeConstant = 0.35; // Soft organic transitions
 
     audioSource = audioCtx.createMediaElementSource(audioElement);
     audioSource.connect(analyser);
@@ -63,17 +86,17 @@ function getVoiceSignal(time) {
     const avg = sum / 38;
     if (avg > 0) {
       const normalized = Math.max(0, (avg - 10) / 80);
-      const amplified = Math.pow(normalized, 1.3) * speechSensitivityMultiplier;
+      const amplified = Math.pow(normalized, 1.2) * speechSensitivityMultiplier;
       return Math.min(1.0, amplified);
     }
   }
 
-  // Fallback pattern simulation
+  // Organic Fallback Cadence
   const speechCycle = 10;
   const position = time % speechCycle;
-  if (position >= 7.5) return 0.0; // Complete silence pause
+  if (position >= 7.5) return 0.0;
 
-  const wave = Math.sin(time * 4.2) * 0.4 + Math.cos(time * 7.8) * 0.3 + 0.55;
+  const wave = Math.sin(time * 3.5) * 0.35 + Math.cos(time * 6.5) * 0.25 + 0.5;
   return Math.max(0.0, Math.min(1.0, wave * speechSensitivityMultiplier));
 }
 
@@ -90,16 +113,29 @@ function animateOrb(timestamp) {
 
   const targetLevel = getVoiceSignal(time);
 
-  // Fast smooth response on spoken syllables, gentle exponential decay into silence[cite: 3]
-  voiceLevel = smoothToward(voiceLevel, targetLevel, delta, targetLevel > voiceLevel ? 18.0 : 3.0);
+  // Controlled response rise/decay (never frantic)
+  voiceLevel = smoothToward(voiceLevel, targetLevel, delta, targetLevel > voiceLevel ? 8.0 : 2.2);
 
-  // When silence occurs, lightLevel hits 0.0, rendering all sphere optics completely invisible[cite: 3]
   body.style.setProperty("--light-level", voiceLevel.toFixed(4));
+
+  // Organic Colour Language: Shifts hue smoothly based on energy level
+  // Deep Blue (0deg) -> Teal (25deg) -> Violet/Magenta (80deg) -> Amber Peak (110deg)
+  let targetHue = 0;
+  if (voiceLevel > 0.8) {
+    targetHue = 110; // Amber/Peak accent
+  } else if (voiceLevel > 0.55) {
+    targetHue = 75;  // Violet/Magenta tension
+  } else if (voiceLevel > 0.25) {
+    targetHue = 25;  // Teal/Warmth connection
+  } else {
+    targetHue = 0;   // Deep Blue calm baseline
+  }
+  body.style.setProperty("--hue-shift", `${targetHue}deg`);
 
   orbFrame = requestAnimationFrame(animateOrb);
 }
 
-// Play / Pause Logic
+// Play / Pause Click Action
 playButton.addEventListener("click", async () => {
   setupWebAudio();
 
@@ -110,15 +146,18 @@ playButton.addEventListener("click", async () => {
   if (audioElement.paused) {
     audioElement.play().then(() => {
       isPlaying = true;
+      requestWakeLock();
       if (actionIcon) actionIcon.textContent = "⏸";
     }).catch((err) => {
       console.warn("Audio play error:", err);
       isPlaying = true;
+      requestWakeLock();
       if (actionIcon) actionIcon.textContent = "⏸";
     });
   } else {
     audioElement.pause();
     isPlaying = false;
+    releaseWakeLock();
     if (actionIcon) actionIcon.textContent = "▶";
   }
 });
@@ -140,7 +179,6 @@ function closeDialog() {
   }
 }
 
-
 closeSettings.addEventListener("click", closeDialog);
 doneSettings.addEventListener("click", closeDialog);
 
@@ -158,8 +196,8 @@ flareIntensityInput.addEventListener("input", () => {
 breathSpeedInput.addEventListener("input", () => {
   const duration = Number(breathSpeedInput.value);
   body.style.setProperty("--breath-duration", `${duration}s`);
-  breathValue.textContent = duration >= 15 ? "Very slow" : duration >= 11 ? "Slow" : "Gentle";
+  breathValue.textContent = `Organic (${duration}s)`;
 });
 
-// Launch loop
+// Launch animation loop
 orbFrame = requestAnimationFrame(animateOrb);

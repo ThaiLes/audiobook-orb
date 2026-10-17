@@ -1,325 +1,96 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#000000">
+<title>Audiobook Orb</title>
+<link rel="stylesheet" href="styles.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<div class="app">
+  <div class="status-bar-spacer"></div>
 
-:root {
-  color-scheme: dark;
-  --bg: #000000; /* Pitch black room background */
-  --cyan: #00f0ff;
-  --blue: #1b52ff;
-  --purple: #9d00ff;
-  --light-level: 0.0; /* Controlled dynamically by voice signal[cite: 3] */
-  --flare-multiplier: 1.0;
-  --breath-duration: 12s;
-}
+  <!-- Centered Living Stage -->
+  <main class="orb-stage" id="orbStage">
+    <div class="orb" id="orb" aria-hidden="true">
+      <!-- Translucent Glass Shell Boundary -->
+      <div class="orb-glass"></div>
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
+      <!-- Living Filaments & Radial Waves -->
+      <div class="filament-weave weave-a"></div>
+      <div class="filament-weave weave-b"></div>
+      <div class="refraction refraction-a"></div>
+      <div class="refraction refraction-b"></div>
 
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: var(--bg);
-  color: #ffffff;
-  font-family: 'DM Sans', sans-serif;
-}
+      <!-- Anamorphic Lens Optics (Horizontal Flare & Optical Refractions) -->
+      <div class="lens-halo"></div>
+      <div class="starburst-rays"></div>
+      <div class="lens-flare"></div>
+      <div class="bokeh-ghost-a"></div>
+      <div class="bokeh-ghost-b"></div>
 
-.app {
-  width: 100%;
-  max-width: 420px;
-  height: 100vh;
-  height: 100dvh;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  background: var(--bg);
-}
+      <!-- Tiny Central Point Origin -->
+      <div class="source-halo"></div>
+      <div class="light-source"></div>
+    </div>
+  </main>
 
-.status-bar-spacer {
-  height: 20px;
-  flex-shrink: 0;
-}
+  <audio id="audiobookPlayer" src="audiobook.mp3"></audio>
 
-/* Centered Stage */
-.orb-stage {
-  flex: 1;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-  background: #000000;
-}
+  <!-- Unobtrusive Bottom Control Bar -->
+  <footer class="bottom-controls">
+    <div class="bottom-left-spacer"></div>
 
-/* --- SPHERE BODY (DISAPPEARS INTO PITCH BLACK DURING SILENCE)[cite: 3] --- */
-.orb {
-  position: relative;
-  width: clamp(220px, 68vw, 280px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  isolation: isolate;
-  overflow: hidden;
-  /* Sphere opacity and glows are tied strictly to light-level[cite: 3] */
-  opacity: calc(var(--light-level) * var(--flare-multiplier));
-  background: 
-    radial-gradient(circle at 50% 50%, rgba(10, 32, 85, 0.95) 0%, rgba(5, 15, 45, 0.85) 60%, rgba(0, 0, 0, 0.98) 100%);
-  box-shadow: 
-    inset 0 0 45px rgba(0, 240, 255, 0.45),
-    inset 0 0 90px rgba(27, 82, 255, 0.5),
-    0 0 30px rgba(0, 240, 255, 0.15);
-  /* Independent breathing loop continues invisibly under pitch black[cite: 3] */
-  animation: orb-breathe var(--breath-duration) ease-in-out infinite;
-  transition: opacity 0.15s ease-out;
-}
+    <div class="center-action-wrapper">
+      <button class="main-action-button" id="playButton" aria-label="Play or Pause">
+        <span id="actionIcon">▶</span>
+      </button>
+      <span class="action-caption" id="actionCaption">20,000 Leagues Under the Sea</span>
+    </div>
 
-/* Translucent Glass Rim[cite: 3] */
-.orb-glass {
-  position: absolute;
-  inset: 1%;
-  border-radius: 50%;
-  opacity: calc(var(--light-level) * var(--flare-multiplier));
-  background: 
-    radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.55), transparent 28%),
-    radial-gradient(ellipse at 50% 100%, rgba(0, 240, 255, 0.35), transparent 50%);
-  transition: opacity 0.15s ease-out;
-}
+    <button class="icon-control" id="settingsButton" title="Settings" aria-label="Settings">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+  </footer>
+</div>
 
-.refraction {
-  position: absolute;
-  left: -10%;
-  top: 30%;
-  width: 120%;
-  height: 40%;
-  border-radius: 50%;
-  border-top: 2px solid rgba(0, 240, 255, 0.9);
-  filter: blur(1px);
-  opacity: calc(var(--light-level) * var(--flare-multiplier) * 0.85);
-  transition: opacity 0.15s ease-out;
-}
+<!-- Modal Settings Dialog -->
+<dialog id="settingsDialog" class="settings-dialog">
+  <div class="dialog-top">
+    <h2>ORB SETTINGS</h2>
+    <button class="close-btn" id="closeSettings">✕</button>
+  </div>
 
-.refraction-a { animation: refraction-a 11s ease-in-out infinite alternate; }
-.refraction-b { top: 40%; border-color: rgba(157, 0, 255, 0.85); animation: refraction-b 15s ease-in-out infinite alternate; }
+  <div class="setting">
+    <div class="setting-hdr">
+      <label for="speechIntensity">Speech Sensitivity</label>
+      <output id="speechValue">100%</output>
+    </div>
+    <input id="speechIntensity" type="range" min="20" max="200" value="100">
+  </div>
 
-/* --- ANAMORPHIC OPTICS PACKAGE[cite: 3, 6] --- */
+  <div class="setting">
+    <div class="setting-hdr">
+      <label for="flareIntensity">Base Brightness Ceiling</label>
+      <output id="intensityValue">100%</output>
+    </div>
+    <input id="flareIntensity" type="range" min="20" max="150" value="100">
+  </div>
 
-/* Violet Halo Ring */
-.lens-halo {
-  position: absolute;
-  width: 58%;
-  aspect-ratio: 1;
-  left: 21%;
-  top: 21%;
-  border-radius: 50%;
-  border: 2px solid rgba(157, 0, 255, 0.85);
-  box-shadow: 
-    0 0 16px rgba(157, 0, 255, 0.8),
-    inset 0 0 16px rgba(157, 0, 255, 0.8);
-  filter: blur(1px);
-  opacity: calc(var(--light-level) * var(--flare-multiplier) * 0.9);
-  transition: opacity 0.15s ease-out;
-  pointer-events: none;
-}
+  <div class="setting">
+    <div class="setting-hdr">
+      <label for="breathSpeed">Breathing Speed</label>
+      <output id="breathValue">Organic (5s)</output>
+    </div>
+    <input id="breathSpeed" type="range" min="5" max="15" value="5">
+  </div>
 
-/* Circular Flare Glow */
-.starburst-rays {
-  position: absolute;
-  width: 80%;
-  aspect-ratio: 1;
-  left: 10%;
-  top: 10%;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 50% 50%, 
-    rgba(255, 255, 255, 0.95) 0%, 
-    rgba(0, 240, 255, 0.65) 25%, 
-    rgba(27, 82, 255, 0.35) 50%, 
-    transparent 70%
-  );
-  filter: blur(5px);
-  opacity: calc(var(--light-level) * var(--flare-multiplier) * 0.85);
-  transition: opacity 0.15s ease-out;
-  pointer-events: none;
-}
-
-/* Delicate Horizontal Anamorphic Flare Beam[cite: 3, 6] */
-.lens-flare {
-  position: absolute;
-  z-index: 5;
-  left: -40%;
-  right: -40%;
-  top: 50%;
-  height: 3px;
-  background: linear-gradient(
-    90deg, 
-    transparent 0%, 
-    rgba(0, 240, 255, 0.15) 10%, 
-    rgba(0, 240, 255, 1.0) 45%, 
-    #ffffff 50%, 
-    rgba(0, 240, 255, 1.0) 55%, 
-    rgba(0, 240, 255, 0.15) 90%, 
-    transparent 100%
-  );
-  box-shadow: 
-    0 0 16px 4px rgba(0, 240, 255, 1.0),
-    0 0 35px 10px rgba(27, 82, 255, 0.85);
-  opacity: calc(var(--light-level) * var(--flare-multiplier) * 0.95);
-  transform: translateY(-50%) scaleX(calc(0.3 + (var(--light-level) * 0.7)));
-  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
-  pointer-events: none;
-}
-
-/* White-Hot Core Light Source (The Narrator)[cite: 3] */
-.source-halo {
-  position: absolute;
-  width: 32%;
-  aspect-ratio: 1;
-  left: 34%;
-  top: 34%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 1.0), rgba(0, 240, 255, 0.95) 35%, transparent 75%);
-  filter: blur(6px);
-  opacity: calc(var(--light-level) * var(--flare-multiplier));
-  transition: opacity 0.15s ease-out;
-}
-
-.light-source {
-  position: absolute;
-  z-index: 6;
-  left: 50%;
-  top: 50%;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  background: #ffffff;
-  opacity: calc(var(--light-level) * var(--flare-multiplier));
-  box-shadow: 
-    0 0 10px 4px #ffffff,
-    0 0 24px 9px #00f0ff,
-    0 0 50px 16px rgba(27, 82, 255, 0.95);
-  transition: opacity 0.15s ease-out;
-}
-
-/* Bottom Controls */
-.bottom-controls {
-  height: 100px;
-  width: 100%;
-  padding: 0 24px 20px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.bottom-left-spacer { width: 42px; }
-
-.icon-control {
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  padding: 10px;
-  transition: color 0.2s ease;
-}
-
-.icon-control:hover { color: var(--cyan); }
-
-.center-action-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.main-action-button {
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
-  border: 1.5px solid var(--cyan);
-  background: transparent;
-  color: #ffffff;
-  font-size: 20px;
-  cursor: pointer;
-  box-shadow: 0 0 18px rgba(0, 240, 255, 0.35);
-  display: grid;
-  place-items: center;
-}
-
-.action-caption {
-  font-size: 10px;
-  color: var(--cyan);
-  letter-spacing: 0.5px;
-  opacity: 0.8;
-}
-
-/* Settings Dialog */
-.settings-dialog {
-  margin: auto;
-  padding: 24px;
-  border-radius: 20px;
-  background: #0c1017;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-  width: calc(100% - 40px);
-  max-width: 320px;
-}
-
-.settings-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.85);
-}
-
-.dialog-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.dialog-top h2 { font-size: 12px; letter-spacing: 1.5px; color: var(--cyan); }
-.close-btn { background: none; border: none; color: #888; font-size: 16px; cursor: pointer; }
-
-.setting { margin-bottom: 20px; }
-.setting-hdr { display: flex; justify-content: space-between; font-size: 11px; }
-.setting-hdr label { color: #aaa; }
-.setting-hdr output { color: var(--cyan); }
-
-input[type="range"] {
-  width: 100%;
-  margin-top: 8px;
-  accent-color: var(--cyan);
-}
-
-.done-btn {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  background: var(--cyan);
-  border: none;
-  color: #000;
-  font-weight: 600;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-/* Independent Breathing Physics[cite: 3] */
-@keyframes orb-breathe {
-  0%, 100% { transform: scale(0.95); }
-  50% { transform: scale(1.05); }
-}
-
-@keyframes refraction-a {
-  from { transform: rotate(-25deg) translateY(-6px); }
-  to { transform: rotate(-10deg) translateY(6px); }
-}
-
-@keyframes refraction-b {
-  from { transform: rotate(20deg) translateY(6px); }
-  to { transform: rotate(32deg) translateY(-5px); }
-}
+  <button class="done-btn" id="doneSettings">Done</button>
+</dialog>
+</body>
+</html>

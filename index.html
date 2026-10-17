@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -13,27 +12,34 @@
 <div class="app">
   <div class="status-bar-spacer"></div>
 
-  <!-- Centered Visual Stage -->
+  <!-- Centered Living Stage -->
   <main class="orb-stage" id="orbStage">
     <div class="orb" id="orb" aria-hidden="true">
+      <!-- Translucent Glass Shell Boundary -->
       <div class="orb-glass"></div>
+
+      <!-- Living Filaments & Radial Waves -->
+      <div class="filament-weave weave-a"></div>
+      <div class="filament-weave weave-b"></div>
       <div class="refraction refraction-a"></div>
       <div class="refraction refraction-b"></div>
-      
-      <!-- CINEMATIC ANAMORPHIC OPTICS PACKAGE -->
-      <div class="lens-halo"></div>          <!-- Circular Purple/Violet Ring -->
-      <div class="starburst-rays"></div>      <!-- Circular Radial Flare Glow -->
-      <div class="lens-flare"></div>          <!-- Horizontal Anamorphic Streak -->
-      <div class="bokeh-ghost-a"></div>      <!-- Lens Bokeh Disk 1 -->
-      <div class="bokeh-ghost-b"></div>      <!-- Lens Bokeh Disk 2 -->
+
+      <!-- Anamorphic Lens Optics (Horizontal Flare & Optical Refractions) -->
+      <div class="lens-halo"></div>
+      <div class="starburst-rays"></div>
+      <div class="lens-flare"></div>
+      <div class="bokeh-ghost-a"></div>
+      <div class="bokeh-ghost-b"></div>
+
+      <!-- Tiny Central Point Origin -->
       <div class="source-halo"></div>
-      <div class="light-source"></div>        <!-- White-Hot Core -->
+      <div class="light-source"></div>
     </div>
   </main>
 
   <audio id="audiobookPlayer" src="audiobook.mp3"></audio>
 
-  <!-- Bottom Control Bar -->
+  <!-- Unobtrusive Bottom Control Bar -->
   <footer class="bottom-controls">
     <div class="bottom-left-spacer"></div>
 
@@ -44,7 +50,6 @@
       <span class="action-caption" id="actionCaption">20,000 Leagues Under the Sea</span>
     </div>
 
-    <!-- Gear Settings Icon -->
     <button class="icon-control" id="settingsButton" title="Settings" aria-label="Settings">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="3"/>
@@ -63,7 +68,7 @@
 
   <div class="setting">
     <div class="setting-hdr">
-      <label for="speechIntensity">Speech Intensity</label>
+      <label for="speechIntensity">Speech Sensitivity</label>
       <output id="speechValue">100%</output>
     </div>
     <input id="speechIntensity" type="range" min="20" max="200" value="100">
@@ -71,7 +76,7 @@
 
   <div class="setting">
     <div class="setting-hdr">
-      <label for="flareIntensity">Base Flare Brightness</label>
+      <label for="flareIntensity">Base Brightness Ceiling</label>
       <output id="intensityValue">100%</output>
     </div>
     <input id="flareIntensity" type="range" min="20" max="150" value="100">
@@ -80,9 +85,9 @@
   <div class="setting">
     <div class="setting-hdr">
       <label for="breathSpeed">Breathing Speed</label>
-      <output id="breathValue">Slow</output>
+      <output id="breathValue">Organic (5s)</output>
     </div>
-    <input id="breathSpeed" type="range" min="6" max="18" value="12">
+    <input id="breathSpeed" type="range" min="5" max="15" value="5">
   </div>
 
   <button class="done-btn" id="doneSettings">Done</button>
