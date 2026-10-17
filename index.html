@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#000000">
+<title>Audiobook Orb</title>
+<link rel="stylesheet" href="styles.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<div class="app">
+  <div class="status-bar-spacer"></div>
+
+  <!-- Centered Visual Stage -->
+  <main class="orb-stage" id="orbStage">
+    <div class="orb" id="orb" aria-hidden="true">
+      <div class="orb-glass"></div>
+      <div class="refraction refraction-a"></div>
+      <div class="refraction refraction-b"></div>
+      
+      <!-- CINEMATIC ANAMORPHIC OPTICS PACKAGE -->
+      <div class="lens-halo"></div>          <!-- Circular Purple/Violet Ring -->
+      <div class="starburst-rays"></div>      <!-- Circular Radial Flare Glow -->
+      <div class="lens-flare"></div>          <!-- Horizontal Anamorphic Streak -->
+      <div class="bokeh-ghost-a"></div>      <!-- Lens Bokeh Disk 1 -->
+      <div class="bokeh-ghost-b"></div>      <!-- Lens Bokeh Disk 2 -->
+      <div class="source-halo"></div>
+      <div class="light-source"></div>        <!-- White-Hot Core -->
+    </div>
+  </main>
+
+  <audio id="audiobookPlayer" src="twentythousandleagues_01_verne_128kb.mp3"></audio>
+
+  <!-- Bottom Control Bar -->
+  <footer class="bottom-controls">
+    <div class="bottom-left-spacer"></div>
+
+    <div class="center-action-wrapper">
+      <button class="main-action-button" id="playButton" aria-label="Play or Pause">
+        <span id="actionIcon">▶</span>
+      </button>
+      <span class="action-caption" id="actionCaption">20,000 Leagues Under the Sea</span>
+    </div>
+
+    <!-- Gear Settings Icon -->
+    <button class="icon-control" id="settingsButton" title="Settings" aria-label="Settings">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+  </footer>
+</div>
+
+<!-- Modal Settings Dialog -->
+<dialog id="settingsDialog" class="settings-dialog">
+  <div class="dialog-top">
+    <h2>ORB SETTINGS</h2>
+    <button class="close-btn" id="closeSettings">✕</button>
+  </div>
+
+  <div class="setting">
+    <div class="setting-hdr">
+      <label for="speechIntensity">Speech Intensity</label>
+      <output id="speechValue">100%</output>
+    </div>
+    <input id="speechIntensity" type="range" min="20" max="200" value="100">
+  </div>
+
+  <div class="setting">
+    <div class="setting-hdr">
+      <label for="flareIntensity">Base Flare Brightness</label>
+      <output id="intensityValue">100%</output>
+    </div>
+    <input id="flareIntensity" type="range" min="20" max="150" value="100">
+  </div>
+
+  <div class="setting">
+    <div class="setting-hdr">
+      <label for="breathSpeed">Breathing Speed</label>
+      <output id="breathValue">Slow</output>
+    </div>
+    <input id="breathSpeed" type="range" min="6" max="18" value="12">
+  </div>
+
+  <button class="done-btn" id="doneSettings">Done</button>
+</dialog>
+</body>
+</html>
