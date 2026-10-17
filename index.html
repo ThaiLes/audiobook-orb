@@ -12,34 +12,14 @@
 <div class="app">
   <div class="status-bar-spacer"></div>
 
-  <!-- Centered Living Stage -->
+  <!-- Living Canvas Stage -->
   <main class="orb-stage" id="orbStage">
-    <div class="orb" id="orb" aria-hidden="true">
-      <!-- Translucent Glass Shell Boundary -->
-      <div class="orb-glass"></div>
-
-      <!-- Living Filaments & Radial Waves -->
-      <div class="filament-weave weave-a"></div>
-      <div class="filament-weave weave-b"></div>
-      <div class="refraction refraction-a"></div>
-      <div class="refraction refraction-b"></div>
-
-      <!-- Anamorphic Lens Optics (Horizontal Flare & Optical Refractions) -->
-      <div class="lens-halo"></div>
-      <div class="starburst-rays"></div>
-      <div class="lens-flare"></div>
-      <div class="bokeh-ghost-a"></div>
-      <div class="bokeh-ghost-b"></div>
-
-      <!-- Tiny Central Point Origin -->
-      <div class="source-halo"></div>
-      <div class="light-source"></div>
-    </div>
+    <canvas id="orbCanvas" width="600" height="600"></canvas>
   </main>
 
   <audio id="audiobookPlayer" src="audiobook.mp3"></audio>
 
-  <!-- Unobtrusive Bottom Control Bar -->
+  <!-- Unobtrusive Control Bar -->
   <footer class="bottom-controls">
     <div class="bottom-left-spacer"></div>
 
@@ -59,13 +39,11 @@
   </footer>
 </div>
 
-<!-- Modal Settings Dialog -->
 <dialog id="settingsDialog" class="settings-dialog">
   <div class="dialog-top">
     <h2>ORB SETTINGS</h2>
     <button class="close-btn" id="closeSettings">✕</button>
   </div>
-
   <div class="setting">
     <div class="setting-hdr">
       <label for="speechIntensity">Speech Sensitivity</label>
@@ -73,7 +51,6 @@
     </div>
     <input id="speechIntensity" type="range" min="20" max="200" value="100">
   </div>
-
   <div class="setting">
     <div class="setting-hdr">
       <label for="flareIntensity">Base Brightness Ceiling</label>
@@ -81,15 +58,13 @@
     </div>
     <input id="flareIntensity" type="range" min="20" max="150" value="100">
   </div>
-
   <div class="setting">
     <div class="setting-hdr">
       <label for="breathSpeed">Breathing Speed</label>
       <output id="breathValue">Organic (5s)</output>
     </div>
-    <input id="breathSpeed" type="range" min="5" max="15" value="5">
+    <input id="breathSpeed" type="range" min="3" max="12" value="5">
   </div>
-
   <button class="done-btn" id="doneSettings">Done</button>
 </dialog>
 </body>
